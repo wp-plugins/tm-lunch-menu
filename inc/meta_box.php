@@ -1,21 +1,39 @@
 <?php
+/*
+ * WordPress Meta Box
+ *
+ * Contains the wordpress_meta_box class. Requires PHP version 5+ and WordPress version 2.9 or greater.
+ *
+ * @version 1.0.1
+ * @author Micah Wood
+ * @copyright Copyright (c) 2011 - Micah Wood
+ * @license GPL 3 - http://www.gnu.org/licenses/gpl.txt
+ */
 
 if( !class_exists('wordpress_meta_box') ){
 
+    /*
+    * WordPress Meta Box Class
+    *
+    * A class that handles the registration of WordPress meta boxes and takes care of all the
+    * dirty work for you.
+    *
+    * @package WordPress Meta Box
+    */
     class wordpress_meta_box {
 
         private $id,                            // HTML id for meta box
-                $title,                         // Title for meta box
-                $content_path,                  // Path to the file containing the meta box content
-                $data = array(),                // Array containing the names of data values to be saved
-                $post_type = 'post',            // Post type that displays meta box
-                $context = 'advanced',          // Location on page: normal, advanced, side
-                $priority = 'default',          // Priority on page: high, core, default, low
-                $callback_args = array(),       // Array of arguments to pass to callback function
-                $user_capability = 'edit_post', // User capability required to save meta data
-                $nonce_name = '_wpnonce',       // Nonce name used to save meta data
-                $nonce_action = '-1',           // Value used to add context to the nonce
-                $errors = array();              // A collection of meta names and error codes
+            $title,                         // Title for meta box
+            $content_path,                  // Path to the file containing the meta box content
+            $data = array(),                // Array containing the names of data values to be saved
+            $post_type = 'post',            // Post type that displays meta box
+            $context = 'advanced',          // Location on page: normal, advanced, side
+            $priority = 'default',          // Priority on page: high, core, default, low
+            $callback_args = array(),       // Array of arguments to pass to callback function
+            $user_capability = 'edit_post', // User capability required to save meta data
+            $nonce_name = '_wpnonce',       // Nonce name used to save meta data
+            $nonce_action = '-1',           // Value used to add context to the nonce
+            $errors = array();              // A collection of meta names and error codes
 
         function __construct( $id, $title, $content_path, $args = array() ){
             // Set class properties
@@ -74,14 +92,15 @@ if( !class_exists('wordpress_meta_box') ){
             // Setup array for the data we are saving
             $data = $this->data;
             // Use this filter to add post meta to save for this meta box
-            $data = apply_filters( $this->post_type . '-save_meta_data', $data );
-           // Construct array of meta data
-                        $new_data = array();
-                        foreach($data as $meta) {
-                                $new_data[$meta] = $_POST[$meta];
-                        }
-                        // Open editing of results
-                        $data = apply_filters( $this->post_type . '-edit_meta_data', $new_data);
+            $data = apply_filters( 'save_meta_box-' . $this->id, $data );
+            // Construct array of meta data
+            $new_data = array();
+            foreach($data as $meta) {
+                $new_data[$meta] = $_POST[$meta];
+            }
+            // Open editing of results
+            $data = apply_filters( 'edit_meta_box-' . $this->id, $new_data);
+
             // Save meta data
             foreach( $data as $name=>$value ){
                 // Get existing meta value
@@ -96,11 +115,11 @@ if( !class_exists('wordpress_meta_box') ){
                     // If the new meta is empty, delete the current meta
                     if ( empty( $value ) ){
                         delete_post_meta( $post_id, $name );
-                    // Otherwise, update the meta
+                        // Otherwise, update the meta
                     } else {
                         update_post_meta( $post_id, $name, $value );
                     }
-                // Validation is enabled and meta value is invalid
+                    // Validation is enabled and meta value is invalid
                 } else {
                     // Store general error if not already done
                     if( !$this->errors[$this->id] ){
@@ -119,7 +138,7 @@ if( !class_exists('wordpress_meta_box') ){
 
         function validate_post_meta( $name, $value ){
             $validation = array( 'valid' => true, 'code' => 1 );
-            $validation = apply_filters( $this->post_type . '-validate_meta_data', $validation, $name, $value );
+            $validation = apply_filters( 'validate_meta_box-' . $this->id, $validation, $name, $value );
             return $validation;
         }
 
@@ -134,7 +153,5 @@ if( !class_exists('wordpress_meta_box') ){
                 echo '<div class="error"><p>Invalid entry in the <strong>' . $this->title . '</strong> box. Please check your entries.</p></div>';
             }
         }
-
     }
-
 }
