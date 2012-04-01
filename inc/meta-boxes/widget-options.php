@@ -12,7 +12,7 @@ $selected = ' selected="selected"';
     value="<?php echo $instance['title']; ?>" />
 </p>
 <p>
-	<label for="<?php echo $this->get_field_id('numberposts'); ?>"><?php _e('Max number of menus to show at one time', 'tm-lunch-menu'); ?>:</label><br />
+	<label for="<?php echo $this->get_field_id('numberposts'); ?>"><?php _e('Maximum number of menus to show at one time', 'tm-lunch-menu'); ?>:</label><br />
 	<select id="<?php echo $this->get_field_id('numberposts'); ?>"
     name="<?php echo $this->get_field_name('numberposts'); ?>">
 		<?php

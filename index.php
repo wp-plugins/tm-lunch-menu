@@ -71,6 +71,9 @@ class tm_lunch_menu {
         // Update/Initialize if needed
         if(get_option('tm_lunch_menu_ver') != $this->version) $this->update();
 
+        // Add in translation if applicable
+        add_action('init', array($this, 'init'));
+
         // Register deactivation hook
         register_deactivation_hook( TM_LM_FILE, array($this, 'deactivation_hook') );
 
@@ -91,6 +94,10 @@ class tm_lunch_menu {
         add_action('manage_tm_lunch_menu_posts_custom_column', array(&$this, 'add_data_post_columns'));
         add_filter('manage_edit-tm_lunch_menu_sortable_columns', array($this, 'add_sortable_columns'));
         add_filter('request', array($this, 'menu_order_columns_by'));
+    }
+
+    function init() {
+        load_plugin_textdomain('tm-lunch-menu', false, TM_LM_PATH.'/languages/');
     }
 
     function admin_enqueue_scripts($hook){
