@@ -39,7 +39,7 @@ Initial plugin release!
 = 1.0.2 =
 * Added complete internationalization support
 * Added option to change the date display format
-* Other various improvments
+* Other various improvements
 = 1.0.1 =
 * Fixed show-stopping bug where widget may not display
 = 1.0 =
